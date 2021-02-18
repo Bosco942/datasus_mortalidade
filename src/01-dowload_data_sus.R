@@ -53,4 +53,5 @@ cap.I2018 <- cap.I2018 %>%
     
     date = parse_date(paste0(date, "_2018"), "%b_%Y"),
     valor = as.numeric(valor)
-  )
+  ) %>% 
+  filter(date > '2018-07-01')
