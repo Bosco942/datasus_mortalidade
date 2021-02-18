@@ -7,51 +7,71 @@ rm(list = ls())
 
 library(tidyverse)
 
-library(lubridate)
-
 # Parametros --------------------------------------------------------------
 
 path_data_1 <- "data/Cap.I"
 
-# Importando dados --------------------------------------------------------
+
+leitura_datasus_csv(path = 'data/Cap.II', nome_variavel = 'neoplasias_tumores')
 
 
-cap.I2018 <- read_csv2(
-  
-  paste(
-    path_data_1,
-    "Cap.I - Algumas doenças infecciosas e parasitárias - 2008 - residência.csv",
-    sep = "/"
-  ),
-  locale = locale(encoding = "latin1")
-) %>%  janitor::clean_names()
+# Funções -----------------------------------------------------------------
+
+source('fcts/leitura_datasus_csv.R', echo = F)
+
+# Importando - Doenças infecciosas e parastárias --------------------------
+
+doencas_infc_parasitas <- path_data_1 %>% 
+  dir_ls() %>% 
+  map(
+    .f = ~read.csv2(
+      file = .
+    ) %>% 
+      janitor::clean_names() %>%
+      pivot_longer(
+        !municipio,
+        names_to = "date", values_to = "doencas_infc_parasitas"
+      ) %>%
+      mutate(
+        date = recode(
+          date,
+          "abril" = "apr",
+          "agosto" = "aug",
+          "dezembro" = "dec",
+          "fevereiro" = "feb",
+          "janeiro" = "jan",
+          "julho" = "jul",
+          "junho" = "jun",
+          "maio" = "may",
+          "marco" = "mar",
+          "novembro" = "nov",
+          "outubro" = "oct",
+          "setembro" = "sep"
+        ),
+        doencas_infc_parasitas = as.numeric(
+          str_replace_all(doencas_infc_parasitas, "-", "0")
+        )
+      ) %>% 
+      relocate(date)
+  )
 
 
-# Arrumando dados ---------------------------------------------------------
+doencas_infc_parasitas <- map_df(
+  doencas_infc_parasitas, 
+  ~as.data.frame(.x), .id = "id"
+  )
 
-cap.I2018 <- cap.I2018 %>% 
-  pivot_longer(
-    !municipio,
-    names_to = "date", values_to = "valor"
-    )  
-## Recoding cap.I2018$date
-cap.I2018$date[cap.I2018$date == "abril"] <- "apr"
-cap.I2018$date[cap.I2018$date == "agosto"] <- "aug"
-cap.I2018$date[cap.I2018$date == "dezembro"] <- "dec"
-cap.I2018$date[cap.I2018$date == "fevereiro"] <- "feb"
-cap.I2018$date[cap.I2018$date == "janeiro"] <- "jan"
-cap.I2018$date[cap.I2018$date == "julho"] <- "jul"
-cap.I2018$date[cap.I2018$date == "junho"] <- "jun"
-cap.I2018$date[cap.I2018$date == "maio"] <- "may"
-cap.I2018$date[cap.I2018$date == "marco"] <- "mar"
-cap.I2018$date[cap.I2018$date == "novembro"] <- "nov"
-cap.I2018$date[cap.I2018$date == "outubro"] <- "oct"
-cap.I2018$date[cap.I2018$date == "setembro"] <- "sep"
-
-cap.I2018 <- cap.I2018 %>% 
+doencas_infc_parasitas <- doencas_infc_parasitas %>% 
   mutate(
-    
-    date = parse_date(paste0(date, "_2018"), "%b_%Y"),
-    valor = as.numeric(valor)
+    ano = regmatches(id, gregexpr("[[:digit:]]+", id)),
+    date = parse_date(paste(date, ano, sep = '_'), '%b_%Y')
   ) %>% 
-  filter(date > '2018-07-01')
+  select(-id, -ano) %>% 
+  arrange(date) %>% 
+  as_tibble() %>% 
+  mutate(
+    ano = year(date),
+    mes = month(date),
+    .after = date
+  )
+
