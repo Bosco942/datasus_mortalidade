@@ -41,6 +41,7 @@ neoplasias_tumores <- mem_leitura_datasus_csv(
   nome_variavel = 'neoplasias_tumores'
 )
 
+
 # Importando  - Cap.III - Doenças sangue órgãos hemat e transt imu --------
 
 ds_hemat_transt_imunitar <- mem_leitura_datasus_csv(
