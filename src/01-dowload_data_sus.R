@@ -1,4 +1,3 @@
-
 # Limpando dados ----------------------------------------------------------
 
 rm(list = ls())
@@ -6,72 +5,198 @@ rm(list = ls())
 # Pacotes -----------------------------------------------------------------
 
 library(tidyverse)
+library(lubridate)
+library(memoise)
 
 # Parametros --------------------------------------------------------------
 
-path_data_1 <- "data/Cap.I"
-
-
-leitura_datasus_csv(path = 'data/Cap.II', nome_variavel = 'neoplasias_tumores')
-
+path_data <- fs::dir_ls('data/datasus') %>% as.character()
 
 # Funções -----------------------------------------------------------------
 
+#' * Lendo função de leitura dos arquivos *
+
 source('fcts/leitura_datasus_csv.R', echo = F)
 
-# Importando - Doenças infecciosas e parastárias --------------------------
+#'* Criando arquivo para memorização *
 
-doencas_infc_parasitas <- path_data_1 %>% 
-  dir_ls() %>% 
-  map(
-    .f = ~read.csv2(
-      file = .
+my_cache_folder <- cache_filesystem(path = 'data/mem')
+
+mem_leitura_datasus_csv <- memoise(
+  f = leitura_datasus_csv,
+  cache = my_cache_folder
+)
+
+# Importando - Cap.I - Doenças infecciosas e parastárias ------------------
+
+doencas_infc_parasitas <- mem_leitura_datasus_csv(
+  path = path_data[1],
+  nome_variavel = 'doencas_infc_parasitas'
+  )
+
+# Importando - Cap.II - Neoplasias (tumores) ------------------------------
+
+neoplasias_tumores <- mem_leitura_datasus_csv(
+  path = path_data[2],
+  nome_variavel = 'neoplasias_tumores'
+)
+
+# Importando  - Cap.III - Doenças sangue órgãos hemat e transt imu --------
+
+ds_hemat_transt_imunitar <- mem_leitura_datasus_csv(
+  path = path_data[3],
+  nome_variavel = 'ds_hemat_transt_imunitar'
+)
+
+# Importando - Cap.IV - Doenças endócrinas nutricionais e metabóli --------
+
+do_endocrinas_nutr_metabolicas <- mem_leitura_datasus_csv(
+  path = path_data[4],
+  nome_variavel = 'do_endocrinas_nutr_metabolicas'
+)
+
+# Importando - Cap.IX - Doenças do aparelho circulatório ------------------
+
+do_aparelho_circulatorio <- mem_leitura_datasus_csv(
+  path = path_data[5],
+  nome_variavel = 'do_aparelho_circulatorio'
+)
+
+# Importando - Cap.V - Transtornos mentais e comportamentais --------------
+
+transtornos_mentais_comportamentos <- mem_leitura_datasus_csv(
+  path = path_data[6],
+  nome_variavel = 'transtornos_mentais_comportamentos'
+)
+
+# Importando - Cap.VI - Doenças do sistema nervoso ------------------------
+
+do_sistema_nervoso <- mem_leitura_datasus_csv(
+  path = path_data[7],
+  nome_variavel = 'do_sistema_nervoso'
+)
+
+# Importando - Cap.VII - Doenças do olho e anexos -------------------------
+
+do_olho_anexos <- mem_leitura_datasus_csv(
+  path = path_data[8],
+  nome_variavel = 'do_olho_anexos'
+)
+
+# Impoortando - Cap.VIII - Doenças do ouvido e da apófise mastóide --------
+
+do_ouvido_apofise_mastoide <- mem_leitura_datasus_csv(
+  path = path_data[9],
+  nome_variavel = 'do_ouvido_apofise_mastoide'
+)
+
+# Importando - Cap.X - Doenças do aparelho respiratório -------------------
+
+do_aparelho_respiratorio <- mem_leitura_datasus_csv(
+  path = path_data[10],
+  nome_variavel = 'do_aparelho_respiratorio'
+)
+
+# Importando - Cap.XI - Doenças do aparelho digestivo ---------------------
+
+do_aparelho_respiratorio <- mem_leitura_datasus_csv(
+  path = path_data[11],
+  nome_variavel = 'do_aparelho_respiratorio'
+)
+
+# Importando - Cap.XII - Doenças da pele e do tecido subcutâneo -----------
+
+do_pele_tecido_subcutaneo <- mem_leitura_datasus_csv(
+  path = path_data[12],
+  nome_variavel = 'do_pele_tecido_subcutaneo'
+)
+
+# Importando - Cap.XIII - Doenças sist osteomuscular e tec conjunt --------
+
+do_sist_osteomuscular_tec_conjunt <- mem_leitura_datasus_csv(
+  path = path_data[13],
+  nome_variavel = 'do_sist_osteomuscular_tec_conjunt'
+)
+
+# Importando - Cap.XIV - Doenças do aparelho geniturinário ----------------
+
+do_aparelho_geniturinario <- mem_leitura_datasus_csv(
+  path = path_data[14],
+  nome_variavel = 'do_aparelho_geniturinario'
+)
+
+# Importando - Cap.XV - Gravidez parto e puerpério ------------------------
+
+gravidez_parto_puerperio <- mem_leitura_datasus_csv(
+  path = path_data[15],
+  nome_variavel = 'gravidez_parto_puerperio'
+)
+
+# Importando - Cap.XVI - Algumas afec originadas no período perina --------
+
+afec_orig_period_perinatal <- mem_leitura_datasus_csv(
+  path = path_data[16],
+  nome_variavel = 'afec_orig_period_perinatal'
+)
+
+# Importando - Cap.XVII - Malf cong deformid e anomalias cromossôm --------
+
+malf_cong_deformid_anom_cromo <- mem_leitura_datasus_csv(
+  path = path_data[17],
+  nome_variavel = 'malf_cong_deformid_anom_cromo'
+)
+
+# Importando - Cap.XVIII - Sint sinais e achad anorm ex clín e lab --------
+
+sint_sinais_achad_anorm_ex_clin_lab <- mem_leitura_datasus_csv(
+  path = path_data[18],
+  nome_variavel = 'sint_sinais_achad_anorm_ex_clin_lab'
+)
+
+# Importanddo - Cap.XX - Causas externas de morbidade e mortalidade -------
+
+causas_ext_morbidad_mortalidade <- mem_leitura_datasus_csv(
+  path = path_data[19],
+  nome_variavel = 'causas_ext_morbidad_mortalidade'
+)
+
+# Consolidando base de dados ----------------------------------------------
+
+base_datasus <- doencas_infc_parasitas %>% 
+  full_join(neoplasias_tumores) %>% 
+  full_join(ds_hemat_transt_imunitar) %>% 
+  full_join(do_endocrinas_nutr_metabolicas) %>% 
+  full_join(do_aparelho_circulatorio) %>% 
+  full_join(transtornos_mentais_comportamentos) %>% 
+  full_join(do_sistema_nervoso) %>% 
+  full_join(do_olho_anexos) %>% 
+  full_join(do_ouvido_apofise_mastoide) %>% 
+  full_join(do_aparelho_respiratorio) %>% 
+  full_join(do_aparelho_respiratorio) %>% 
+  full_join(do_pele_tecido_subcutaneo) %>% 
+  full_join(do_sist_osteomuscular_tec_conjunt) %>% 
+  full_join(do_aparelho_geniturinario) %>% 
+  full_join(gravidez_parto_puerperio) %>% 
+  full_join(afec_orig_period_perinatal) %>% 
+  full_join(malf_cong_deformid_anom_cromo) %>% 
+  full_join(sint_sinais_achad_anorm_ex_clin_lab) %>% 
+  full_join(causas_ext_morbidad_mortalidade) %>% 
+  pivot_longer(
+    !c(date, municipio),
+    names_to = 'variavel',
+    values_to = 'valor'
     ) %>% 
-      janitor::clean_names() %>%
-      pivot_longer(
-        !municipio,
-        names_to = "date", values_to = "doencas_infc_parasitas"
-      ) %>%
-      mutate(
-        date = recode(
-          date,
-          "abril" = "apr",
-          "agosto" = "aug",
-          "dezembro" = "dec",
-          "fevereiro" = "feb",
-          "janeiro" = "jan",
-          "julho" = "jul",
-          "junho" = "jun",
-          "maio" = "may",
-          "marco" = "mar",
-          "novembro" = "nov",
-          "outubro" = "oct",
-          "setembro" = "sep"
-        ),
-        doencas_infc_parasitas = as.numeric(
-          str_replace_all(doencas_infc_parasitas, "-", "0")
-        )
-      ) %>% 
-      relocate(date)
-  )
-
-
-doencas_infc_parasitas <- map_df(
-  doencas_infc_parasitas, 
-  ~as.data.frame(.x), .id = "id"
-  )
-
-doencas_infc_parasitas <- doencas_infc_parasitas %>% 
   mutate(
-    ano = regmatches(id, gregexpr("[[:digit:]]+", id)),
-    date = parse_date(paste(date, ano, sep = '_'), '%b_%Y')
-  ) %>% 
-  select(-id, -ano) %>% 
-  arrange(date) %>% 
-  as_tibble() %>% 
-  mutate(
-    ano = year(date),
-    mes = month(date),
-    .after = date
+    valor = ifelse(is.na(valor), 0, valor)
   )
+
+DataCombine::rmExcept('base_datasus')
+
+gc()
+
+# Save Data ---------------------------------------------------------------
+
+write_csv(base_datasus, 'out/base_datasus.csv')
+write_rds(base_datasus, 'out/base_datasus.rds')
+
 
