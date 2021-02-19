@@ -27,6 +27,30 @@ mem_leitura_datasus_csv <- memoise(
   cache = my_cache_folder
 )
 
+
+# Importando -  Dados municipais ------------------------------------------
+
+municipios <- readxl::read_excel(
+  'data/municipios/RELATORIO_DTB_BRASIL_MUNICIPIO.xls'
+  )
+
+
+municipios_df <- municipios %>% 
+  janitor::clean_names() %>% 
+  rename(
+    cd_uf = uf_1,
+    sigla_uf = uf_3,
+    cd_ibge = codigo_municipio_completo,
+    nm_municipio = nome_municipio,
+    nm_uf = nome_uf
+  ) %>% 
+  select(cd_uf, sigla_uf, nm_uf, cd_ibge, nm_municipio) %>% 
+  mutate(
+    cd_ibge_incompleto = str_sub(cd_ibge, end = 6),
+    .after = cd_ibge
+    )
+
+
 # Importando - Cap.I - Doenças infecciosas e parastárias ------------------
 
 doencas_infc_parasitas <- mem_leitura_datasus_csv(
@@ -186,13 +210,16 @@ base_datasus <- doencas_infc_parasitas %>%
     names_to = 'variavel',
     values_to = 'valor'
     ) %>% 
+  rename(cd_ibge_incompleto = municipio) %>% 
   mutate(
-    valor = ifelse(is.na(valor), 0, valor)
+    valor = ifelse(is.na(valor), 0, valor),
+    cd_ibge_incompleto = as.character(cd_ibge_incompleto)
   )
-
-DataCombine::rmExcept('base_datasus')
-
-gc()
+  
+base_datasus <- base_datasus %>% 
+  left_join(municipios_df, by = 'cd_ibge_incompleto') %>% 
+  relocate(cd_uf:nm_uf, .after = date) %>%
+  relocate(cd_ibge:nm_municipio, .after = cd_ibge_incompleto)
 
 # Save Data ---------------------------------------------------------------
 
