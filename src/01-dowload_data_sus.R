@@ -42,15 +42,6 @@ nome_variavel <-  c(
 
 source('fcts/leitura_datasus_csv.R', echo = F)
 
-#'* Criando arquivo para memorização *
-
-my_cache_folder <- cache_filesystem(path = 'data/mem')
-
-mem_leitura_datasus_csv <- memoise(
-  f = leitura_datasus_csv,
-  cache = my_cache_folder
-)
-
 # Importando -  Dados municipais ------------------------------------------
 
 municipios <- readxl::read_excel(
