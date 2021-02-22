@@ -122,5 +122,6 @@ base_datasus <- plyr::join_all(
 
 # Save Data ---------------------------------------------------------------
 
+
 write_csv2(base_datasus, 'out/base_datasus.csv')
 write_rds(base_datasus, 'out/base_datasus.rds')
