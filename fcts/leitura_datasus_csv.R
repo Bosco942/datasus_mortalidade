@@ -104,10 +104,6 @@ mem_leitura_datasus_csv <- memoise(
 #   ~as.data.frame(.x), .id = "id"
 # )
 # 
-# ds_hemat_transt_imunitar %>%
-#   mutate(
-#     id = str_extract_all(id, "[[:digit:]]+")
-#   ) %>% view
 # 
 # doencas_infc_parasitas <- ds_hemat_transt_imunitar %>%
 #   mutate(
