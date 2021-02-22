@@ -53,6 +53,15 @@ leitura_datasus_csv <- function(path, nome_variavel) {
   
 }
 
+#'* Criando arquivo para memorização *
+
+my_cache_folder <- cache_filesystem(path = 'data/mem')
+
+mem_leitura_datasus_csv <- memoise(
+  f = leitura_datasus_csv,
+  cache = my_cache_folder
+)
+
 # Script base para a função -----------------------------------------------
 
 # ds_hemat_transt_imunitar <- path_data[3] %>%
@@ -95,10 +104,6 @@ leitura_datasus_csv <- function(path, nome_variavel) {
 #   ~as.data.frame(.x), .id = "id"
 # )
 # 
-# ds_hemat_transt_imunitar %>%
-#   mutate(
-#     id = str_extract_all(id, "[[:digit:]]+")
-#   ) %>% view
 # 
 # doencas_infc_parasitas <- ds_hemat_transt_imunitar %>%
 #   mutate(
