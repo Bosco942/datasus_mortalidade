@@ -82,28 +82,30 @@ rm(i)
 
 # Consolidando base de dados ----------------------------------------------
 
+lista_objetos <-   list(
+  'doencas_infc_parasitas' = doencas_infc_parasitas,
+  'neoplasias_tumores' = neoplasias_tumores,
+  'ds_hemat_transt_imunitar' = ds_hemat_transt_imunitar,
+  'do_endocrinas_nutr_metabolicas' = do_endocrinas_nutr_metabolicas,
+  'do_aparelho_circulatorio' = do_aparelho_circulatorio,
+  'transtornos_mentais_comportamentos' = transtornos_mentais_comportamentos,
+  'do_sistema_nervoso' = do_sistema_nervoso,
+  'do_olho_anexos' = do_olho_anexos,
+  'do_ouvido_apofise_mastoide' = do_ouvido_apofise_mastoide,
+  'do_aparelho_respiratorio' = do_aparelho_respiratorio,
+  'do_aparelho_disgestivo' = do_aparelho_disgestivo,
+  'do_pele_tecido_subcutaneo' = do_pele_tecido_subcutaneo,
+  'do_sist_osteomuscular_tec_conjunt' = do_sist_osteomuscular_tec_conjunt,
+  'do_aparelho_geniturinario' = do_aparelho_geniturinario,
+  'gravidez_parto_puerperio' = gravidez_parto_puerperio,
+  'afec_orig_period_perinatal' = afec_orig_period_perinatal,
+  'malf_cong_deformid_anom_cromo' = malf_cong_deformid_anom_cromo,
+  'sint_sinais_achad_anorm_ex_clin_lab' = sint_sinais_achad_anorm_ex_clin_lab,
+  'causas_ext_morbidad_mortalidade' = causas_ext_morbidad_mortalidade
+)
+
 base_datasus <- plyr::join_all(
-  list(
-    doencas_infc_parasitas,
-    neoplasias_tumores,
-    ds_hemat_transt_imunitar,
-    do_endocrinas_nutr_metabolicas,
-    do_aparelho_circulatorio,
-    transtornos_mentais_comportamentos,
-    do_sistema_nervoso,
-    do_olho_anexos,
-    do_ouvido_apofise_mastoide,
-    do_aparelho_respiratorio,
-    do_aparelho_disgestivo,
-    do_pele_tecido_subcutaneo,
-    do_sist_osteomuscular_tec_conjunt,
-    do_aparelho_geniturinario,
-    gravidez_parto_puerperio,
-    afec_orig_period_perinatal,
-    malf_cong_deformid_anom_cromo,
-    sint_sinais_achad_anorm_ex_clin_lab,
-    causas_ext_morbidad_mortalidade
-  ),
+  lista_objetos,
   by = c("date", "municipio"),
   type = 'full'
 ) %>% 
@@ -121,8 +123,23 @@ base_datasus <- plyr::join_all(
   relocate(cd_uf:nm_uf, .after = date) %>%
   relocate(cd_ibge:nm_municipio, .after = cd_ibge_incompleto)
 
+# Adicionando base na lista 
+
+lista_objetos$base_datasus <- base_datasus
+
 # Save Data ---------------------------------------------------------------
 
-write_csv2(base_datasus, 'out/base_datasus.csv')
-write_rds(base_datasus, 'out/base_datasus.rds')
+# Salvando em formato csv
 
+write_csv2(base_datasus, 'out/base_datasus.csv')
+
+# Salvando em formato xlsx
+
+writexl::write_xlsx(
+    lista_objetos,
+  path = 'out/base_datasus.xlsx'
+  )
+
+# SAlvando em formato rds
+
+write_rds(base_datasus, 'out/base_datasus.rds')
