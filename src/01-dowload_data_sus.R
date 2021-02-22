@@ -63,6 +63,7 @@ municipios_df <- municipios %>%
     .after = cd_ibge
   )
 
+
 # Importando - Planilhas com os dados do SUS ------------------------------
 
 for (i in seq_along(path_data)) {
@@ -122,6 +123,6 @@ base_datasus <- plyr::join_all(
 
 # Save Data ---------------------------------------------------------------
 
-
 write_csv2(base_datasus, 'out/base_datasus.csv')
 write_rds(base_datasus, 'out/base_datasus.rds')
+
